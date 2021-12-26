@@ -1,17 +1,35 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+  <div>
+    <div id="body">
+     
+    </div>
+    <section class="sectin">
+      <div class="container">
+        <NavBar />
+        <router-view></router-view>
+      </div>
+    </section>
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import HelloWorld from './components/HelloWorld.vue';
-
+import { defineComponent, onMounted, ref } from "vue";
+import NavBar from "./components/NavBar.vue";
 export default defineComponent({
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
+    NavBar,
+  },
+
+  setup() {
+    const target = ref(null);
+    onMounted(() => {
+      console.log("hi app", target.value);
+    });
+    return {
+      target,
+    };
+  },
 });
 </script>
 
@@ -20,7 +38,6 @@ export default defineComponent({
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
   margin-top: 60px;
 }

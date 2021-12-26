@@ -1,12 +1,56 @@
-import { shallowMount } from '@vue/test-utils'
-import HelloWorld from '@/components/HelloWorld.vue'
 
-describe('HelloWorld.vue', () => {
-  it('renders props.msg when passed', () => {
-    const msg = 'new message'
-    const wrapper = shallowMount(HelloWorld, {
-      props: { msg }
+import { mount, flushPromises } from '@vue/test-utils';
+import { nextTick } from 'vue';
+import TimeLine from '../../src/components/TimeLine.vue';
+import {today, thisWeek, thisMonth} from '../../src/mocks'
+jest.mock('axios', () => ({
+  get: (url: string) => {
+    return Promise.resolve({
+      data: [today, thisWeek, thisMonth]
     })
-    expect(wrapper.text()).toMatch(msg)
+  }
+}))
+function mountTimeLine(){
+  return mount({
+    components:{TimeLine},
+    template: `
+    <suspense>
+  <template #default>
+   <TimeLine/>
+  </template>
+  <template #fallback>
+   ...Loading
+  </template>
+  </suspense>
+    `
+  });
+}
+describe ('TimeLine', ()=>{
+  it('require today post by deafult', async()=>{
+   const wrapper= mountTimeLine();
+    //console.log(wrapper.html())
+    //for internal promises we used  //await nextTick();
+    await flushPromises() // for external promises like axios
+    expect(wrapper.html()).toContain(today.created.format('Do MMM'))
   })
-})
+  it('update when the period is clicked', async ()=>{
+    const wrapper= mountTimeLine();
+    await flushPromises()
+  await  wrapper.get('[data-test="This Week"]').trigger('click')
+    // wait fot the next frame
+     //await nextTick();
+    expect(wrapper.html()).toContain(today.created.format('Do MMM'))
+    expect(wrapper.html()).toContain(thisWeek.created.format('Do MMM'))
+  })
+
+  it('update when the period is clicked', async ()=>{
+     const wrapper= mountTimeLine();
+     await flushPromises() 
+  await  wrapper.get('[data-test="This Month"]').trigger('click')
+    // wait fot the next frame
+     //await nextTick();
+    
+    expect(wrapper.html()).toContain(today.created.format('Do MMM'))
+    expect(wrapper.html()).toContain(thisMonth.created.format('Do MMM'))
+  })
+});
