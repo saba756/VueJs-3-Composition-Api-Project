@@ -1,10 +1,18 @@
 <template>
   <div>
-    <div id="body">
-     
+    <div class="modal" :style="style">
+      <div class="modal-background"></div>
+      <div class="modal-content"></div>
+      <button @click="hide" class="modal-close is-large"></button>
     </div>
-    <section class="sectin">
+    <section class="section">
       <div class="container">
+        <FormInput
+          v-model="username"
+          name="Username"
+          type="text"
+          :error="usernameStatus.message"
+        />{{ username }}
         <NavBar />
         <router-view></router-view>
       </div>
@@ -13,21 +21,39 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import NavBar from "./components/NavBar.vue";
+import FormInput from "./components/FormInput.vue";
+import { useModal } from "./useModal";
+import { required, length, Status, validate } from "./validation";
 export default defineComponent({
   name: "App",
   components: {
     NavBar,
+    FormInput,
   },
 
   setup() {
-    const target = ref(null);
-    onMounted(() => {
-      console.log("hi app", target.value);
+    const modal = useModal();
+    const username = ref("username");
+    const usernameStatus = computed<Status>(() => {
+      return validate(username.value, [
+        required(),
+        length({ min: 5, max: 10 }),
+      ]);
+    });
+    const style = computed(() => {
+      return {
+        display: modal.show.value ? "block" : "none",
+      };
     });
     return {
-      target,
+      usernameStatus,
+      username,
+      style,
+      hide: () => {
+        modal.hideModal();
+      },
     };
   },
 });
