@@ -8,15 +8,17 @@
         </div>
       </div>
     </div>
-    <teleport to="#modal">
-      <div>Modal</div>
-    </teleport>
+    <teleport to="#modal"> <SignUp /> </teleport>
   </div>
 </template>
 <script lang="ts">
 import { computed, defineComponent, onMounted } from "vue";
+import SignUp from "./SignUp.vue";
 import { useModal } from "../useModal";
 export default defineComponent({
+  components: {
+    SignUp,
+  },
   setup() {
     const modal = useModal();
     return {

@@ -5,6 +5,7 @@ import axios from 'axios';
 import random from 'lodash/random'
 import {today, thisWeek, thisMonth,Post} from './mocks';
 import '../node_modules/highlight.js/styles/atom-one-dark.css';
+import { store, storeKey } from './store';
 function delay (){
     return new Promise( res =>{
       setTimeout(res,2000)
@@ -39,4 +40,5 @@ axios.post = async (url: string, payload: any) => {
 }
 const app =createApp(App)
 app.use(router)
+app.use( store)
 app.mount('#app')
